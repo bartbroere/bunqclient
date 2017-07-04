@@ -6,7 +6,7 @@ def readme():
 
 setup(
     name='bunqclient',
-    version='2017.07.04',
+    version='2017.7.4',
     description='Python client for the bunq public API',
     long_description=readme(),
     keywords=["bunq", "bank", "api"],
@@ -16,7 +16,7 @@ setup(
     license='MIT',
     author='Bart Broere',
     author_email='mail@bartbroere.eu',
-    install_requires=['requests'],
+    install_requires=['requests', 'pycryptodome'],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'License :: OSI Approved :: MIT License',
