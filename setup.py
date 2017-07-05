@@ -6,12 +6,11 @@ def readme():
 
 setup(
     name='bunqclient',
-    version='2017.7.5',
+    version='2017.7.6',
     description='Python client for the bunq public API',
     long_description=readme(),
     keywords=["bunq", "bank", "api"],
     packages=['bunqclient'],
-    scripts=['bunqclient.py'],
     url='https://github.com/bartbroere/bunqclient/',
     license='MIT',
     author='Bart Broere',
