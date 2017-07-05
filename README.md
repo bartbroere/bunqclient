@@ -28,7 +28,7 @@ To use the sandbox version change the ``base`` parameter. Note that you should
 use a separate API key for this. A sandbox key can be acquired by asking bunq
 support.
 
-``python
+```python
 from bunqclient import BunqClient
 bunq_sandbox = BunqClient(base="https://sandbox.public.api.bunq.com/v1", 
                           secret="")
