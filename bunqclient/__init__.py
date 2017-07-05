@@ -16,7 +16,7 @@ class BunqClient(object):
         self.secret = secret.encode("latin1")
         self.headers = {}
         self.headers["Cache-Control"] = "no-cache"
-        self.headers["User-Agent"] = "bunqclient 2017.7.6"
+        self.headers["User-Agent"] = "bunqclient 2017.7.7"
         self.headers["X-Bunq-Geolocation"] = "0 0 0 0 000"
         self.headers["X-Bunq-Language"] = "en_US"
         self.headers["X-Bunq-Region"] = "nl_NL"
@@ -62,7 +62,8 @@ class BunqClient(object):
     def request(self, method="GET", data="", **k):
         o = {self.hierarchy.index(idtype): idtype for idtype in k.keys()}
         e = [self.base, request]
-        e.extend(["/".join([i, str(j)]) for i, j in sorted(o.items())])
+        e.extend(["/".join([i.replace("_", "-"), 
+                            str(j)]) for i, j in sorted(o.items())])
         url = "/".join(e)
         if type(data) == type(dict()): data = json.dumps(data)
         self.headers["X-Bunq-Client-Request-Id"] = str(uuid.uuid4())
