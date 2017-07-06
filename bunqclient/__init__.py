@@ -16,29 +16,29 @@ class BunqClient(object):
         self.secret = secret.encode("latin1")
         self.headers = {}
         self.headers["Cache-Control"] = "no-cache"
-        self.headers["User-Agent"] = "bunqclient 2017.7.7"
+        self.headers["User-Agent"] = "bunqclient 2017.7.8"
         self.headers["X-Bunq-Geolocation"] = "0 0 0 0 000"
         self.headers["X-Bunq-Language"] = "en_US"
         self.headers["X-Bunq-Region"] = "nl_NL"
-        self.hierarchy = ["avatar", "attachment-public", "installation",
-        "user", "user-person", "user-company", "device", "device-server",
-        "session", "session-server", "server-public-key", "monetary-account",
-        "monetary-account-bank", "payment", "payment-batch",
-        "request-inquiry", "request-inquiry-batch", "request-response",
-        "draft-payment", "schedule-payment", "schedule-payment-batch",
-        "cash-register", "qr-code", "content", "schedule",
-        "schedule-instance", "credential-password-ip", "ip",
-        "tab-usage-single", "tab-usage-multiple", "tab", "tab-item",
-        "tab-item-batch", "qr-code-content", "tab-result-inquiry",
-        "tab-result-response", "mastercard-action", "token-qr-request-ideal",
-        "card", "card-debit", "card-name", "chat", "chat-conversation",
-        "message", "message-attachment", "message-text",
-        "certificate-pinned", "attachment", "attachment-tab",
-        "invoice", "customer-statement", "export-annual-overview", "content"]
+        self.hierarchy = ["avatar", "attachment_public", "installation",
+        "user", "user_person", "user_company", "device", "device_server",
+        "session", "session_server", "server_public_key", "monetary_account",
+        "monetary_account_bank", "payment", "payment_batch",
+        "request_inquiry", "request_inquiry_batch", "request_response",
+        "draft_payment", "schedule_payment", "schedule_payment_batch",
+        "cash_register", "qr_code", "content", "schedule",
+        "schedule_instance", "credential_password_ip", "ip",
+        "tab_usage_single", "tab_usage_multiple", "tab", "tab_item",
+        "tab_item_batch", "qr_code_content", "tab_result_inquiry",
+        "tab_result_response", "mastercard_action", "token_qr_request_ideal",
+        "card", "card_debit", "card_name", "chat", "chat_conversation",
+        "message", "message_attachment", "message_text",
+        "certificate_pinned", "attachment", "attachment_tab",
+        "invoice", "customer_statement", "export_annual_overview", "content"]
         self.rsakey = Crypto.PublicKey.RSA.generate(2048)
         self.signer = Crypto.Signature.PKCS1_v1_5.new(self.rsakey) 
         installation = self.request(
-            'installation', method="POST", 
+            installation="", method="POST", 
             data={"client_public_key": 
                   self.rsakey.publickey().exportKey().decode('utf-8').replace(
                     "RSA PUBLIC KEY", "PUBLIC KEY")+"\n"})
@@ -46,13 +46,13 @@ class BunqClient(object):
         self.token = installation["Response"][1]["Token"]["token"]
         self.headers["X-Bunq-Client-Authentication"] = self.token
         self.deviceserver = self.request(
-            'device-server',
+            device_server="",
             method="POST",
             data={"description": "bunqclient",
                   "secret": self.secret.decode('utf-8')})
         self.deviceserver = self.deviceserver["Response"][0]["Id"]["id"]
         self.session = self.request(
-            'session-server',
+            session_server="",
             method="POST",
             data={"secret": self.secret.decode('utf-8')})
         self.token = self.session["Response"][1]["Token"]["token"]
@@ -61,13 +61,13 @@ class BunqClient(object):
 
     def request(self, method="GET", data="", **k):
         o = {self.hierarchy.index(idtype): idtype for idtype in k.keys()}
-        e = [self.base, request]
-        e.extend(["/".join([i.replace("_", "-"), 
-                            str(j)]) for i, j in sorted(o.items())])
-        url = "/".join(e)
+        e = [self.base]
+        for _, i in sorted(o.items()): e.append("/".join([i, str(k[i])]))
+        if e[-1][-1] == "/": url = "/".join(e)[:-1].replace("_", "-")
+        else: url="/".join(e).replace("_", "-")
         if type(data) == type(dict()): data = json.dumps(data)
         self.headers["X-Bunq-Client-Request-Id"] = str(uuid.uuid4())
-        if request != "installation":
+        if sorted(o.items())[0][1] != "installation":
             self.headers["X-Bunq-Client-Signature"] = self.sign(
                 url[len(self.base)-3:], data, method).decode('utf-8')
         try: method = getattr(requests, method.lower())

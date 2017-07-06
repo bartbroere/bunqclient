@@ -6,7 +6,7 @@ def readme():
 
 setup(
     name='bunqclient',
-    version='2017.7.7',
+    version='2017.7.8',
     description='Python client for the bunq public API',
     long_description=readme(),
     keywords=["bunq", "bank", "api"],
