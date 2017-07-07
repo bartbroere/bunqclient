@@ -1,19 +1,15 @@
 import base64
-import Crypto.Hash.SHA256
-import Crypto.PublicKey.RSA
-import Crypto.Signature.PKCS1_v1_5
+from Crypto.Hash import SHA256
+from Crypto.PublicKey import RSA
+from Crypto.Signature import PKCS1_v1_5
 import json
 import requests
 import uuid
 
 class BunqClient(object):
 
-    def __init__(self,
-                 base="https://api.bunq.com/v1",
-                 secret=None,
-                 **kwargs):
-        self.base = base
-        self.secret = secret.encode("latin1")
+    def __init__(self, base="https://api.bunq.com/v1", secret=None):
+        self.base, self.secret = base, secret.encode("latin1")
         self.headers = {}
         self.headers["Cache-Control"] = "no-cache"
         self.headers["User-Agent"] = "bunqclient 2017.7.8"
@@ -35,36 +31,26 @@ class BunqClient(object):
         "message", "message_attachment", "message_text",
         "certificate_pinned", "attachment", "attachment_tab",
         "invoice", "customer_statement", "export_annual_overview", "content"]
-        self.rsakey = Crypto.PublicKey.RSA.generate(2048)
-        self.signer = Crypto.Signature.PKCS1_v1_5.new(self.rsakey) 
-        installation = self.request(
-            installation="", method="POST", 
-            data={"client_public_key": 
-                  self.rsakey.publickey().exportKey().decode('utf-8').replace(
-                    "RSA PUBLIC KEY", "PUBLIC KEY")+"\n"})
+        self.rsakey = RSA.generate(2048)
+        self.signer = PKCS1_v1_5.new(self.rsakey) 
+        installation = self.request(installation="", method="POST", data={
+            "client_public_key": self.rsakey.publickey().exportKey().decode(
+                'utf-8').replace("RSA PUBLIC KEY", "PUBLIC KEY")+"\n"})
         self.serverpublickey = installation["Response"][2]["ServerPublicKey"]
         self.token = installation["Response"][1]["Token"]["token"]
         self.headers["X-Bunq-Client-Authentication"] = self.token
-        self.deviceserver = self.request(
-            device_server="",
-            method="POST",
-            data={"description": "bunqclient",
-                  "secret": self.secret.decode('utf-8')})
+        self.deviceserver = self.request(device_server="", method="POST", 
+             data={"description": "bunqclient",
+                   "secret": self.secret.decode('utf-8')})
         self.deviceserver = self.deviceserver["Response"][0]["Id"]["id"]
-        self.session = self.request(
-            session_server="",
-            method="POST",
+        self.session = self.request(session_server="", method="POST",
             data={"secret": self.secret.decode('utf-8')})
         self.token = self.session["Response"][1]["Token"]["token"]
         self.headers["X-Bunq-Client-Authentication"] = self.token
         return
 
     def request(self, method="GET", data="", **k):
-        o = {self.hierarchy.index(idtype): idtype for idtype in k.keys()}
-        e = [self.base]
-        for _, i in sorted(o.items()): e.append("/".join([i, str(k[i])]))
-        if e[-1][-1] == "/": url = "/".join(e)[:-1].replace("_", "-")
-        else: url="/".join(e).replace("_", "-")
+        url = self.prepare(**k)
         if type(data) == type(dict()): data = json.dumps(data)
         self.headers["X-Bunq-Client-Request-Id"] = str(uuid.uuid4())
         if sorted(o.items())[0][1] != "installation":
@@ -75,14 +61,19 @@ class BunqClient(object):
         return json.loads(method(url, data=data, headers=self.headers).text)
 
     def sign(self, url, data, method):
-        signeddata = []
-        signeddata.append(" ".join([method, url]))
+        signeddata = [" ".join([method, url])]
         for header, value in sorted(self.headers.items()):
             if (header in ['Cache-Control', 'User-Agent']) or (
                 header[0:6] == "X-Bunq"):
                 if header != "X-Bunq-Client-Signature":
                     signeddata.append(": ".join([header, value]))
         signeddata.extend(["", data])
-        digest = Crypto.Hash.SHA256.new()
-        digest.update("\n".join(signeddata).encode("latin1"))
-        return base64.b64encode(self.signer.sign(digest))
+        return base64.b64encode(self.signer.sign(SHA256.new().update(
+            "\n".join(signeddata).encode("latin1"))))
+
+    def prepare(self, **k):
+        e = [self.base]
+        o = {self.hierarchy.index(idtype): idtype for idtype in k.keys()}
+        for _, i in sorted(o.items()): e.append("/".join([i, str(k[i])]))
+        url = "/".join(e).replace("_", "-")
+        return url[:-1] if url[-1] == "/" else url

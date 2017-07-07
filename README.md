@@ -37,7 +37,7 @@ bunq_sandbox = BunqClient(base="https://sandbox.public.api.bunq.com/v1",
 ``LIST`` requests are basically ``GET`` requests without a specified key. The 
 first two API calls have the same effect. The third requests a specific 
 ``monetary-account``. Due to the way Python interprets variable names, dashes
-in API methods (``-``) should be replaced with underscores (``_``).
+(``-``) in API methods and keys should be replaced with underscores (``_``).
 
 ```python
 bunq.request(method="LIST", monetary_account="", user=1)
