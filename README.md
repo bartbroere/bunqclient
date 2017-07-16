@@ -1,6 +1,12 @@
 # bunqclient
 Python client for the bunq public API
 
+![Code Climate](https://codeclimate.com/github/bartbroere/bunqclient.svg)
+![BCH compliance](https://bettercodehub.com/edge/badge/bartbroere/bunqclient?branch=master)
+![Release](https://img.shields.io/pypi/v/bunqclient.svg)
+![Licence](https://img.shields.io/pypi/l/bunqclient.svg)
+![Versions](https://img.shields.io/pypi/pyversions/bunqclient.svg)
+
 ## Installation
 Installing the latest release can be done from PyPi:
 ```

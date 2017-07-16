@@ -33,20 +33,19 @@ class BunqClient(object):
         "invoice", "customer_statement", "export_annual_overview", "content"]
         self.rsakey = RSA.generate(2048)
         self.signer = PKCS1_v1_5.new(self.rsakey) 
-        installation = self.request(installation="", method="POST", data={
-            "client_public_key": self.rsakey.publickey().exportKey().decode(
-                'utf-8').replace("RSA PUBLIC KEY", "PUBLIC KEY")+"\n"})
-        self.serverpublickey = installation["Response"][2]["ServerPublicKey"]
-        self.token = installation["Response"][1]["Token"]["token"]
-        self.headers["X-Bunq-Client-Authentication"] = self.token
+        self.installation = self.request(installation="", method="POST", 
+            data={"client_public_key": self.rsakey.publickey().exportKey(
+                ).decode('utf-8').replace("RSA P", "P")+"\n"})
+        self.headers["X-Bunq-Client-Authentication"] = self.installation[\
+            "Response"][1]["Token"]["token"]
         self.deviceserver = self.request(device_server="", method="POST", 
              data={"description": "bunqclient",
                    "secret": self.secret.decode('utf-8')})
         self.deviceserver = self.deviceserver["Response"][0]["Id"]["id"]
         self.session = self.request(session_server="", method="POST",
             data={"secret": self.secret.decode('utf-8')})
-        self.token = self.session["Response"][1]["Token"]["token"]
-        self.headers["X-Bunq-Client-Authentication"] = self.token
+        self.headers["X-Bunq-Client-Authentication"] = self.session[\
+            "Response"][1]["Token"].get("token")
         return
 
     def request(self, method="GET", data="", **k):
