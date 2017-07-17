@@ -4,6 +4,7 @@ from Crypto.Hash import SHA256
 from Crypto.PublicKey import RSA
 from Crypto.Signature import PKCS1_v1_5
 import json
+import pickle
 import requests
 import uuid
 
@@ -36,10 +37,8 @@ class BunqClient(object):
                 if header != "X-Bunq-Client-Signature":
                     signeddata.append(": ".join([header, value]))
         signeddata.extend(["", k.get("data", "")])
-        signeddata = "\n".join(signeddata).encode("latin1")
-        hashed = SHA256.new()
-        hashed.update(signeddata)
-        return base64.b64encode(self.signer.sign(hashed))
+        return base64.b64encode(self.signer.sign(SHA256.new().update(\
+            "\n".join(signeddata).encode("latin1"))))
 
     def prepare(self, **k):
         e = [self.base]
@@ -51,17 +50,16 @@ class BunqClient(object):
     def create_rsasigner(self):
         self.rsakey = RSA.generate(2048)
         self.signer = PKCS1_v1_5.new(self.rsakey)
-        return
 
     def create_session(self, secret=None):
         if secret is not None: self.secret = secret
         self.create_rsasigner()
-        self.installation = self.request(installation="", method="POST", 
+        self.installation = self.request(installation="", method="POST",
             data={"client_public_key": self.rsakey.publickey().exportKey(
                 ).decode('utf-8').replace("RSA P", "P")+"\n"})
         self.headers["X-Bunq-Client-Authentication"] = self.installation[\
             "Response"][1]["Token"]["token"]
-        self.deviceserver = self.request(device_server="", method="POST", 
+        self.deviceserver = self.request(device_server="", method="POST",
              data={"description": "bunqclient",
                    "secret": self.secret.decode('utf-8')})
         self.deviceserver = self.deviceserver["Response"][0]["Id"]["id"]
@@ -71,7 +69,10 @@ class BunqClient(object):
             "Response"][1]["Token"].get("token")
 
     def load_session(self, location):
-        return
+        session = pickle.load(location)
+        self.rsakey, self.signer = session[0], PKCS1_v1_5.new(session[0])
+        self.headers["X-Bunq-Client-Authentication"] = session[1]
 
     def save_session(self, location):
-        return
+        data = (self.rsakey, self.headers["X-Bunq-Client-Authentication"])
+        pickle.dump(data, location)
