@@ -6,7 +6,7 @@ def readme():
 
 setup(
     name='bunqclient',
-    version='2017.7.8',
+    version='2017.7.17',
     description='Python client for the bunq public API',
     long_description=readme(),
     keywords=["bunq", "client", "bank", "api", "bunqclient"],
@@ -22,7 +22,7 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        'Programming Language :: PYthon :: 3.5',
+        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Topic :: Office/Business :: Financial',
         'Topic :: Utilities',
