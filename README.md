@@ -6,6 +6,7 @@ Python client for the bunq public API
 ![Release](https://img.shields.io/pypi/v/bunqclient.svg)
 ![Licence](https://img.shields.io/pypi/l/bunqclient.svg)
 ![Versions](https://img.shields.io/pypi/pyversions/bunqclient.svg)
+![Dependencies](https://img.shields.io/gemnasium/bartbroere/bunqclient.svg)
 
 ## Installation
 Installing the latest release can be done from PyPi:
