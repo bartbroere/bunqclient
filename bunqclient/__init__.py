@@ -10,11 +10,11 @@ import uuid
 
 class BunqClient(object):
 
-    def __init__(self, base="https://api.bunq.com/v1", secret=None):
+    def __init__(self, base="https://api.bunq.com/v1", secret=""):
         self.base, self.secret = base, secret.encode("latin1")
         self.headers = bunqdefault.headers()
         self.hierarchy = bunqdefault.hierarchy()
-        if secret is not None: self.create_session()
+        if secret != "": self.create_session()
         return
 
     def request(self, method="GET", data="", **k):
