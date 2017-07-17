@@ -16,6 +16,7 @@ setup(
     author='Bart Broere',
     author_email='mail@bartbroere.eu',
     install_requires=['requests', 'pycryptodome'],
+    python_requires='>=3.5',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'License :: OSI Approved :: MIT License',
