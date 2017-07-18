@@ -11,12 +11,15 @@ class TestBunqClient(unittest.TestCase):
 			             "https://api.bunq.com/v1/user/1/monetary-account")
 
 	def test_request(self):
+		bunq = BunqClient()
 		self.assertEqual("", "")
 
 	def test_init(self):
+		bunq = BunqClient()
 		self.assertEqual("", "")
 
 	def test_sign(self):
+		bunq = BunqClient()
 		self.assertEqual("", "")
 
 if __name__ == "__main__":
