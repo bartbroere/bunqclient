@@ -6,6 +6,7 @@ Python client for the bunq public API
 ![BCH compliance](https://bettercodehub.com/edge/badge/bartbroere/bunqclient?branch=master)
 ![Dependencies](https://img.shields.io/gemnasium/bartbroere/bunqclient.svg)
 ![Release](https://img.shields.io/pypi/v/bunqclient.svg)
+![Pre-release](https://img.shields.io/github/release/bartbroere/bunqclient/all.svg)
 ![Licence](https://img.shields.io/pypi/l/bunqclient.svg)
 ![Versions](https://img.shields.io/pypi/pyversions/bunqclient.svg)
 
