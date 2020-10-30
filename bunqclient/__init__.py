@@ -8,18 +8,26 @@ import pickle
 import requests
 import uuid
 
+
 class BunqClient:
+    installation = None
+    deviceserver = None
+    rsakey = None
+    signer = None
+    session = None
 
     def __init__(self, base="https://api.bunq.com/v1", secret=""):
         self.base, self.secret = base, secret.encode("latin1")
         self.headers = headers()
         self.hierarchy = hierarchy()
-        if secret != "": self.create_session()
+        if secret != "":
+            self.create_session()
         return
 
     def request(self, method="GET", data="", **k):
         url = self.prepare(**k)
-        if type(data) == type(dict()): data = json.dumps(data)
+        if isinstance(data, dict):
+            data = json.dumps(data)
         self.headers["X-Bunq-Client-Request-Id"] = str(uuid.uuid4())
         if "installation" not in k:
             self.headers["X-Bunq-Client-Signature"] = self.sign(
@@ -43,11 +51,11 @@ class BunqClient:
         sha256er.update("\n".join(signeddata).encode("latin1"))
         return base64.b64encode(self.signer.sign(sha256er))
 
-
     def prepare(self, **k):
         e = [self.base]
         o = {self.hierarchy.index(idtype): idtype for idtype in k.keys()}
-        for _, i in sorted(o.items()): e.append("/".join([i, str(k[i])]))
+        for _, i in sorted(o.items()):
+            e.append("/".join([i, str(k[i])]))
         url = "/".join(e).replace("_", "-")
         return url[:-1] if url[-1] == "/" else url
 
@@ -59,8 +67,10 @@ class BunqClient:
         if secret is not None: self.secret = secret
         self.create_rsasigner()
         self.installation = self.request(installation="", method="POST",
-                                         data={"client_public_key": self.rsakey.publickey().exportKey(
-                                         ).decode('utf-8').replace("RSA P", "P") + "\n"})
+                                         data={
+                                             "client_public_key": self.rsakey.publickey().exportKey(
+                                             ).decode('utf-8').replace("RSA P", "P") + "\n"
+                                         })
         self.headers["X-Bunq-Client-Authentication"] = self.installation[ \
             "Response"][1]["Token"]["token"]
         self.deviceserver = self.request(device_server="", method="POST",
