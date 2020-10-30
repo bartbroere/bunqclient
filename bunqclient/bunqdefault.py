@@ -16,7 +16,7 @@ def hierarchy():
 
 def headers():
     return {"Cache-Control": "no-cache",
-            "User-Agent": "bunqclient 2017.7.18",
+            "User-Agent": "bunqclient 2020.10.30",
             "X-Bunq-Geolocation": "0 0 0 0 000",
             "X-Bunq-Language": "en_US",
             "X-Bunq-Region": "nl_NL"}
