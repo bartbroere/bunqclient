@@ -1,9 +1,15 @@
+Now archived and not maintained.
+Check out [the official Python SDK for the Bunq API](https://github.com/bunq/sdk_python) instead:
+https://github.com/bunq/sdk_python
+
+<hr></hr>
+
+
 # bunqclient
-Python client for the bunq public API
+Python client for the bunq public API.
 
 ![Build status](https://img.shields.io/travis/bartbroere/bunqclient.svg)
 ![Code Climate](https://codeclimate.com/github/bartbroere/bunqclient.svg)
-![BCH compliance](https://bettercodehub.com/edge/badge/bartbroere/bunqclient?branch=master)
 ![Release](https://img.shields.io/pypi/v/bunqclient.svg)
 ![Pre-release](https://img.shields.io/github/release/bartbroere/bunqclient/all.svg)
 ![Licence](https://img.shields.io/pypi/l/bunqclient.svg)
